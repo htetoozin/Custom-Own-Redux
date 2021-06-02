@@ -11,21 +11,22 @@
         let store = {
             todos: [
                 'One', 'Two', 'Three'
-            ]
+            ],
+            users: ['Mg Mg']
         }
 
-        //action
+        //todo action
         const addToDo = (text) => {
             return {
-                type: 'ADD',
+                type: 'ADD_TODO',
                 payload: text
             }
         }
 
-        //reducer
-        const reducer = (state, action) => {
+        //todo reducer
+        const toDoReducer = (state, action) => {
             switch (action.type) {
-                case 'ADD':
+                case 'ADD_TODO':
                     return {...state, todos: [...state.todos, action.payload]}
                     // statements_1
                     break;
@@ -34,11 +35,44 @@
                     break;
             }
         }
+
+        //user action
+        const addToUser = (name) => {
+            return {
+                type: 'ADD_USER',
+                payload: name
+            }
+        }
+
+        //user reducer 
+        const userReducer = (state, action) => {
+             switch (action.type) {
+                case 'ADD_USER':
+                    return {...state, users: [...state.users, action.payload]}
+                    // statements_1
+                    break;
+                default:
+                   return state
+                    break;
+            }
+        }
+
+        //combine reducer
+        const combineReducer = (reducer1, reducer2) =>{
+            return function(state, action){
+                let state1 = reducer1(state, action)
+                let state2 = reducer2(state1, action)
+                return state2
+            }
+        }
+
+
         //dispactch
         const dispatch = (action) => {
             //nextState = previousState + action
             console.log('dispatch action ', action)
-            store = reducer(store, action)
+            let newReducer = combineReducer(toDoReducer, userReducer)
+            store = newReducer(store, action)
             return store
         }
 
@@ -46,6 +80,12 @@
         console.log('state after four', nextState)
         nextState = dispatch(addToDo('five'))
         console.log('state after five ', nextState)
+
+        nextState = dispatch(addToUser('Ko Ko'))
+        console.log('state after add user ko ko ', nextState)
+
+        nextState = dispatch(addToUser('Kyaw Kyaw'))
+        console.log('state after add user kyaw kyaw', nextState)
       
     </script>
 </body>
